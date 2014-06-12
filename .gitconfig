@@ -1,0 +1,10 @@
+[user]
+	name = Tyson Hamilton
+	email = tysonjh@gmail.com 
+[core]
+	editor = vim
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3
+[mergetool]
+	prompt = false
