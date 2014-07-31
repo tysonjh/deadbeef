@@ -3,6 +3,7 @@
 	email = tysonjh@gmail.com 
 [core]
 	editor = emacs -nw
+	excludesfile = ~/.gitignore
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
