@@ -2,7 +2,7 @@
 	name = Tyson Hamilton
 	email = tysonjh@gmail.com 
 [core]
-	editor = vim
+	editor = emacs -nw
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
