@@ -1,36 +1,40 @@
-(require 'package)
-(package-initialize)
-
 ;;
-;; golang specific stuffs
+;; Look and Feel stuff
 ;;
-(require 'go-eldoc) ;; Don't need to require, if you install by package.el
-(add-hook 'go-mode-hook 'go-eldoc-setup)
-
-(add-to-list 'load-path "~/Development/go/src/github.com/dougm/goflymake")
-(require 'go-flymake)
-
-;;
-;; end golang specific stuffs
-;;
-
-;; auto complete search
-(require 'ido)
-
-;; undo-tree-visualize
-(require 'undo-tree)
-(global-set-key (kbd "C-+") 'undo-tree-visualize)
-
-;; kill current buffer
-(global-set-key (kbd "C-c k") 'kill-this-buffer)
+;; disable unsightly things
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(tooltip-mode -1)
 
 ;; window cycling keys (instead of just C-x o)
-(global-set-key (kbd "C-.") 'other-window)
-(global-set-key (kbd "C-,") 'prev-window)
+(global-set-key (kbd "C-x <up>") 'windmove-up)
+(global-set-key (kbd "C-x <down>") 'windmove-down)
+(global-set-key (kbd "C-x <right>") 'windmove-right)
+(global-set-key (kbd "C-x <left>") 'windmove-left)
 
 (defun prev-window ()
   (interactive)
   (other-window -1))
+
+;; kill current buffer
+(global-set-key (kbd "C-c k") 'kill-this-buffer)
+
+;;
+;; Package Stuff
+;;
+(require 'package)
+(add-to-list 'package-archives
+         '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+;; dirtree for that sweet file explorer buffer
+(require 'dirtree)
+
+;; interactively do things for the C-x auto-complete
+(require 'ido)
 
 (add-hook 'ido-setup-hook 'ido-consistent-select-text)
 (defun ido-consistent-select-text ()
@@ -41,32 +45,35 @@
 (setq ido-everywhere t)
 (ido-mode 1)
 
-;; smex for meta
-(global-set-key [(meta x)] (lambda ()
-                             (interactive)
-                             (or (boundp 'smex-cache)
-                                 (smex-initialize))
-                             (global-set-key [(meta x)] 'smex)
-                             (smex)))
+;;; Smex the Smart M-x auto-complete
+(autoload 'smex "smex"
+  "Smex is a M-x enhancement for Emacs, it provides a convenient interface to
+your recently and most frequently used commands.")
 
-(global-set-key [(shift meta x)] (lambda ()
-                                   (interactive)
-                                   (or (boundp 'smex-cache)
-                                       (smex-initialize))
-                                   (global-set-key [(shift meta x)] 'smex-major-mode-commands)
-                                   (smex-major-mode-commands)))
+(global-set-key (kbd "M-x") 'smex)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (zenburn)))
- '(custom-safe-themes (quote ("146d24de1bb61ddfa64062c29b5ff57065552a7c4019bee5d869e938782dfc2a" default)))
- '(package-archives (quote (("gnu" . "http://elpa.gnu.org/packages/") ("melpa" . "http://melpa.milkbox.net/packages/") ("marmalade" . "http://marmalade-repo.org/packages/")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; undo-tree to replace global undo
+(require 'undo-tree)
+(global-undo-tree-mode)
+
+;;
+;; Coding Style
+;;
+
+;; always end a file with a newline
+(setq require-final-newline t)
+
+;; automatic reload from disk on stale buffer
+(global-auto-revert-mode t)
+
+;; elisp
+;; use spaces instead of tabs
+(add-hook 'emacs-lisp-mode-hook
+              (lambda ()
+                ;; Use spaces, not tabs.
+                (setq indent-tabs-mode nil)))
+
+;; Scala
+;; ensime is awesome
+(require 'ensime)
+(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
