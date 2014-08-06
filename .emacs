@@ -2,9 +2,14 @@
 ;; Look and Feel stuff
 ;;
 ;; disable unsightly things
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(tooltip-mode -1)
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tooltip-mode) (tooltip-mode -1))
+
+;; line and column numbers
+(setq line-number-mode t)
+(setq column-number-mode t)
 
 ;; window cycling keys (instead of just C-x o)
 (global-set-key (kbd "C-x <up>") 'windmove-up)
@@ -15,6 +20,10 @@
 (defun prev-window ()
   (interactive)
   (other-window -1))
+
+;; ergonomic meta key
+(global-set-key "\C-x\C-m" 'execute-extended-command)
+(global-set-key "\C-c\C-m" 'execute-extended-command)
 
 ;; kill current buffer
 (global-set-key (kbd "C-c k") 'kill-this-buffer)
@@ -30,27 +39,13 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-;; dirtree for that sweet file explorer buffer
-(require 'dirtree)
+;; helm for incremental completion
+(require 'helm-config)
+(helm-mode 1)
 
-;; interactively do things for the C-x auto-complete
-(require 'ido)
-
-(add-hook 'ido-setup-hook 'ido-consistent-select-text)
-(defun ido-consistent-select-text ()
-  "Make C-Return work in XEmacs as C-RET works in console"
-  (define-key ido-common-completion-map (kbd "<C-return>") 'ido-select-text))
-
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-
-;;; Smex the Smart M-x auto-complete
-(autoload 'smex "smex"
-  "Smex is a M-x enhancement for Emacs, it provides a convenient interface to
-your recently and most frequently used commands.")
-
-(global-set-key (kbd "M-x") 'smex)
+;; projectile for projects
+(projectile-global-mode)
+(global-set-key (kbd "C-c h") 'helm-projectile)
 
 ;; undo-tree to replace global undo
 (require 'undo-tree)
