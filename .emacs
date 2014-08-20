@@ -11,6 +11,12 @@
 (setq line-number-mode t)
 (setq column-number-mode t)
 
+;; matching parens
+(show-paren-mode 1)
+
+;; auto refresh log files (ala tail -f)
+(add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
+
 ;; window cycling keys (instead of just C-x o)
 (global-set-key (kbd "C-x <up>") 'windmove-up)
 (global-set-key (kbd "C-x <down>") 'windmove-down)
@@ -39,17 +45,30 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-;; helm for incremental completion
-(require 'helm-config)
-(helm-mode 1)
-
 ;; projectile for projects
+(require 'helm-projectile)
 (projectile-global-mode)
 (global-set-key (kbd "C-c h") 'helm-projectile)
+(define-key projectile-mode-map (kbd "C-c p p") 'helm-projectile-switch-project)
+
+;; helm for incremental completion
+(require 'helm)
+(require 'helm-config)
+(require 'helm-files)
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(helm-mode 1)
 
 ;; undo-tree to replace global undo
 (require 'undo-tree)
 (global-undo-tree-mode)
+
+;; magit
+(require 'magit)
+(global-set-key (kbd "M-s M-s") 'magit-status)
 
 ;;
 ;; Coding Style
