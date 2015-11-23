@@ -17,16 +17,6 @@
 ;; auto refresh log files (ala tail -f)
 (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 
-;; window cycling keys (instead of just C-x o)
-(global-set-key (kbd "C-x <up>") 'windmove-up)
-(global-set-key (kbd "C-x <down>") 'windmove-down)
-(global-set-key (kbd "C-x <right>") 'windmove-right)
-(global-set-key (kbd "C-x <left>") 'windmove-left)
-
-(defun prev-window ()
-  (interactive)
-  (other-window -1))
-
 ;; ergonomic meta key
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-c\C-m" 'execute-extended-command)
@@ -49,6 +39,29 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
+;; org-mode
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(setq org-tag-alist '(("@meeting" . ?m) ("@development" . ?d) ("@review" . ?r) ("@design" . ?n) ("@process" . ?p) ("@misc" . ?x)))
+(setq org-log-done t)
+
+(setq org-journal-dir "~/Documents/journals")
+(add-to-list 'org-agenda-files (expand-file-name org-journal-dir))
+
+(defun get-journal-file-this-month ()
+  "Return filename for this month's journal."
+  (let ((monthly-name (concat (format-time-string "%Y-%m-%V") ".org")))
+  (expand-file-name (concat org-journal-dir "/" monthly-name))))
+
+(defun journal-file-today ()
+  "Create and load a journal file based on today's date."
+  (interactive)
+  (find-file (get-journal-file-this-month)))
+
+(global-set-key (kbd "C-c f j") 'journal-file-today)
+
 ;; rainbow-parenthesis
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
@@ -59,7 +72,6 @@
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 (setq projectile-switch-project-action 'helm-projectile)
-(global-set-key (kbd "C-c f") 'helm-projectile-grep)
 
 ;; helm for incremental completion
 (require 'helm)
@@ -78,10 +90,7 @@
 
 ;; magit
 (require 'magit)
-(global-set-key (kbd "M-s M-s") 'magit-status)
-
-;; rss feed
-(global-set-key (kbd "C-x w") 'elfeed)
+(global-set-key (kbd "C-x g") 'magit-status)
 
 ;;
 ;; Coding Style
